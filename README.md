@@ -16,10 +16,16 @@ It is a great example for beginners in web development who are learning HTML, CS
 - RESPONSIVE
 - USER FRIENDLY
 
-VIEW ON LARGER SCREEN
-<img src="IMG/Screenshot 2024-01-19 074324.png">
-
-VIEW ON SMALLER SCREEN
+<hr>
+ **VIEW ON SMALLER SCREEN**
+<br>
 <img src="IMG/Screenshot 2024-01-19 074626.png">
+<br>
+**VIEW ON LARGER SCREEN**
+<br>
+<img src="IMG/Screenshot 2024-01-19 074324.png">
+<br>
+
+
 
 
