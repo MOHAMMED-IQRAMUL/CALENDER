@@ -1,7 +1,8 @@
 # CALENDER
 <h1>A Dynamic Calender</h1>
 
- 
+ **LINK TO LIVE PREVIEW**
+ <a href="https://calender-iqramul.netlify.app/">Calender</a>
 
 <h3>A simple and dynamic calendar created using HTML, CSS, and JavaScript.</h3>
 
