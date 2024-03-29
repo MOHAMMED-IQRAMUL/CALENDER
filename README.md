@@ -12,7 +12,6 @@ This project showcases a dynamic calendar that allows users to Access the Calend
 It is a great example for beginners in web development who are learning HTML, CSS, and JavaScript.
 
  ## Features
-
 - DYNAMIC
 - RESPONSIVE
 - USER FRIENDLY
