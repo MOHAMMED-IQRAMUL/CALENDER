@@ -11,74 +11,50 @@ let date = document.querySelector(".date");
 let today = document.querySelector(".today1");
 
 const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  "January", "February", "March", "April", "May", "June", 
+  "July", "August", "September", "October", "November", "December"
 ];
 
-const weeks_day = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
+const weekDays = [
+  "Sunday", "Monday", "Tuesday", "Wednesday", 
+  "Thursday", "Friday", "Saturday"
 ];
 
 let userYear = currentYear;
-let userMonth = months[currentMonth];
-let userDayOfWeek = weeks_day[currentWeekDay];
+let userMonth = currentMonth;
 
-function isLeapYear(userYear1) {
-  return (
-    (userYear1 % 4 === 0 && userYear1 % 100 !== 0) || userYear1 % 400 === 0
-  );
+function isLeapYear(year) {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
 
-const numOfDays = (mon) => {
-  let t = mon;
-  t++;
-  if (t == 8 || (t < 8 && t % 2 != 0) || (t > 8 && t % 2 == 0)) return 31;
-  else if (t == 2) return isLeapYear(userYear) == true ? 29 : 28;
-  else return 30;
+const numOfDays = (monthIndex) => {
+  if (monthIndex === 1) return isLeapYear(userYear) ? 29 : 28; // February
+  return [0, 2, 4, 6, 7, 9, 11].includes(monthIndex) ? 31 : 30; // Other months
 };
 
-const updateCalender = (mo1) => {
-  let D = document.querySelector(".days ul");
-  let Str = "";
-  const firstDay = new Date(userYear, months.indexOf(mo1), 1);
-  let r = firstDay.getDay();
-  for (let i = r; i > 0; i--) Str += `<li class="diff">${31 - i}</li>`;
-  for (let index = 1; index <= numOfDays(months.indexOf(mo1)); index++) {
-    if (index == currentDay) Str += `<li class="today">${index}</li>`;
-    else Str += `<li>${index}</li>`;
+const updateCalendar = (monthIndex) => {
+  let daysContainer = document.querySelector(".days ul");
+  let daysHTML = "";
+  const firstDayOfMonth = new Date(userYear, monthIndex, 1).getDay();
+  
+  for (let i = 0; i < firstDayOfMonth; i++) {
+    daysHTML += `<li class="diff"></li>`;
   }
-  const lastDay = new Date(userYear, months.indexOf(mo1) + 1, 0);
-  let k = lastDay.getDay();
-  if (k != 6) {
-    for (let i = k, j = 1; i < 6; i++, j++) Str += `<li class="diff">${j}</li>`;
-
-    D.innerHTML = Str;
+  
+  for (let day = 1; day <= numOfDays(monthIndex); day++) {
+    daysHTML += `<li class="${day === currentDay && monthIndex === currentMonth && userYear === currentYear ? 'today' : ''}">${day}</li>`;
   }
+  
+  daysContainer.innerHTML = daysHTML;
 };
 
 const main = () => {
   year.innerText = currentYear;
   month.innerText = months[currentMonth];
-  day.innerText = weeks_day[currentWeekDay];
+  day.innerText = weekDays[currentWeekDay];
   date.innerText = currentDay;
   today.innerText = currentDate.toDateString();
-  updateCalender(userMonth);
+  updateCalendar(currentMonth);
 };
 main();
 
@@ -86,136 +62,88 @@ let monthDownBtn = document.querySelector(".month-down");
 let yearDownBtn = document.querySelector(".year-down");
 let monthList = document.querySelector(".month-list");
 let yearList = document.querySelector(".year-list");
-let monthListOpen = false;
-let yearListOpen = false;
-
 let leftBtn = document.querySelector(".left-ico");
 let rightBtn = document.querySelector(".right-ico");
-let currMonth = document.querySelector(".month");
-let currMonthName = currMonth.innerText;
-let idx = months.indexOf(currMonthName);
 
-const remove_month_year_curr = (id = idx ,yr = userYear) => {
-  document.querySelector(`.M${id}`).classList.remove("curr");
-  console.log(yr+" " +id)
-  document.querySelector(`.Y${yr}`).classList.remove("curr");
+const removeMonthYearCurr = (monthIndex = userMonth, year = userYear) => {
+  document.querySelector(`.M${monthIndex}`)?.classList.remove("curr");
+  document.querySelector(`.Y${year}`)?.classList.remove("curr");
 };
 
-const add_month_year_curr = (id = idx ,yr= userYear) => {
-  document.querySelector(`.M${id}`).classList.add("curr");
-  document.querySelector(`.Y${yr}`).classList.add("curr");
+const addMonthYearCurr = (monthIndex = userMonth, year = userYear) => {
+  document.querySelector(`.M${monthIndex}`)?.classList.add("curr");
+  document.querySelector(`.Y${year}`)?.classList.add("curr");
 };
 
 const setYear = () => {
   year.innerText = userYear;
 };
 
-const setMonth = (ee) => {
-  month.innerText = ee;
+const setMonth = (monthIndex) => {
+  month.innerText = months[monthIndex];
 };
 
-yearList.addEventListener("click", (e1) => {
-  remove_month_year_curr();
-  userYear = e1.target.innerText;
+yearList.addEventListener("click", (e) => {
+  removeMonthYearCurr();
+  userYear = parseInt(e.target.innerText);
   setYear();
-  add_month_year_curr(idx,userYear);
-  updateCalender(userMonth);
+  addMonthYearCurr(userMonth, userYear);
+  updateCalendar(userMonth);
 });
 
-monthList.addEventListener("click", (e1) => {
-  remove_month_year_curr(months.indexOf(userMonth));
-   userMonth = e1.target.innerText;
-   setMonth(userMonth);
-  add_month_year_curr(months.indexOf(e1.target.innerText));
-  updateCalender(userMonth);
+monthList.addEventListener("click", (e) => {
+  const newMonthIndex = months.indexOf(e.target.innerText);
+  removeMonthYearCurr(userMonth);
+  userMonth = newMonthIndex;
+  setMonth(userMonth);
+  addMonthYearCurr(userMonth);
+  updateCalendar(userMonth);
 });
-
-
 
 (() => {
-  monthList.innerHTML = `<ul>
-    <li class="M0">January</li>
-    <li class="M1">February</li>
-    <li class="M2">March</li>
-    <li class="M3">April</li>
-    <li class="M4">May</li>
-    <li class="M5">June</li>
-    <li class="M6">July</li>
-    <li class="M7">August</li>
-    <li class="M8">September</li>
-    <li class="M9">October</li>
-    <li class="M10">November</li>
-    <li class="M11">December</li>
-</ul>`;
-  yearList.innerHTML = `  <ul>
-<li class="Y2020">2020</li>
-<li class="Y2021">2021</li>
-<li class="Y2022">2022</li>
-<li class="Y2023">2023</li>
-<li class="Y2024">2024</li>
-<li class="Y2025">2025</li>
-<li class="Y2026">2026</li>
-<li class="Y2027">2027</li>
-<li class="Y2028">2028</li>
-<li class="Y2029">2029</li>
-<li class="Y2030">2030</li>
-</ul>`;
-  add_month_year_curr();
+  monthList.innerHTML = months.map((m, i) => `<li class="M${i}">${m}</li>`).join('');
+  yearList.innerHTML = Array.from({length: 11}, (_, i) => `<li class="Y${currentYear + i}">${currentYear + i}</li>`).join('');
+  addMonthYearCurr();
 })();
 
-const setVisible = (e) => {
-  e.classList.add("visible");
-};
-
-const removeVisible = (e) => {
-  e.classList.remove("visible");
-};
-
 leftBtn.addEventListener("click", () => {
-  remove_month_year_curr(idx);
-  idx--;
-  if (idx == -1) {
-    idx = 11;
-    userYear-=1;
+  removeMonthYearCurr(userMonth);
+  userMonth--;
+  if (userMonth < 0) {
+    userMonth = 11;
+    userYear--;
   }
-  currMonthName = months[idx];
-  currMonth.innerText = currMonthName;
-  add_month_year_curr();
+  addMonthYearCurr(userMonth, userYear);
   setYear();
-  updateCalender(currMonthName);
+  updateCalendar(userMonth);
 });
 
 rightBtn.addEventListener("click", () => {
-  remove_month_year_curr(idx)
-  idx++;
-  if (idx == 12) {
-    idx = 0;
-    userYear+=1;
+  removeMonthYearCurr(userMonth);
+  userMonth++;
+  if (userMonth > 11) {
+    userMonth = 0;
+    userYear++;
   }
-  currMonthName = months[idx];
-  currMonth.innerText = currMonthName;
-  add_month_year_curr();
+  addMonthYearCurr(userMonth, userYear);
   setYear();
-  updateCalender(currMonthName);
+  updateCalendar(userMonth);
 });
 
-monthDownBtn.addEventListener("click", () => {
-  if (monthListOpen == true) {
-    monthListOpen = false;
-    removeVisible(monthList);
+const toggleVisibility = (element, isOpen) => {
+  if (isOpen) {
+    element.classList.add("visible");
   } else {
-    monthListOpen = true;
-    setVisible(monthList);
+    element.classList.remove("visible");
   }
+};
+
+monthDownBtn.addEventListener("click", () => {
+  const isOpen = monthList.classList.contains("visible");
+  toggleVisibility(monthList, !isOpen);
 });
 
 yearDownBtn.addEventListener("click", () => {
-  if (yearListOpen == true) {
-    yearListOpen = false;
-
-    removeVisible(yearList);
-  } else {
-    yearListOpen = true;
-    setVisible(yearList);
-  }
+  const isOpen = yearList.classList.contains("visible");
+  toggleVisibility(yearList, !isOpen);
 });
